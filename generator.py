@@ -89,6 +89,7 @@ def generate_cdrs(c, o, n, start_date):
     ops = generate_operators(c, o)
     subscribers = generates_subscribers(ops, n//4)
 
+    print("Sequence|IMSI|IMEI|Usage Type|MSISDN|Call date|Call time|Duration(sec)|Bytes Rx|Bytes Tx|2nd Party IMSI|2nd Party MSISDN")
     current = start_date
     for i in range(n):
         seq = str(i)
