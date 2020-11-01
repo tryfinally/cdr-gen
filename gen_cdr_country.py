@@ -51,25 +51,32 @@ class Generator:
     def __init__(self, operators):
         self.mobile_operators = operators
 
-    def test(self, n):
-        mccs = self.mobile_operators.select_random_mcc(n)
-        for mcc in mccs:
-            for mo in mcc[1]:
-                mo.generates_subscribers(n)
-                print(mo.iso, mo.mcc, mo.mnc, mo.country_code, mo.subscribers)
+    def test(self, operators, subscribers):
+
+        mncs = list()
+        for mcc in self.mobile_operators.select_random_mcc(operators):
+            mncs.extend(mcc[1])
+
+        for mnc in mncs:
+            mnc.generates_subscribers(subscribers)
+
+        return mncs
 
 
 def main():
     if len(sys.argv) < 3:
-            print("Usage: ", sys.argv[0], "country_code subscribers")
+            print("Usage: ", sys.argv[0], "operators subscribers")
             sys.exit(1)
 
-    cc = sys.argv[1]
+
+    op = int(sys.argv[1])
     nn = int(sys.argv[2])
 
     operators = MobileOperators('./mcc-mnc-table.csv')
     gen = Generator(operators)
-    gen.test(nn)
+    mncs = gen.test(op, nn)
+    for m in mncs:
+        print(m.iso, m.network,  m.subscribers)
 
 
 
