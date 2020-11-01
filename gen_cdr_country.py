@@ -53,6 +53,7 @@ class MobileOperators:
         r = []
         for k in random.sample(self.by_mcc.keys(), countries_n):
             mobile_operators = self.by_mcc[k]
+            print(mobile_operators[0].country)
             carriers_per_mcc = len(mobile_operators)
             population = carriers_per_mcc * subscribers_n
             msin = list(random_data.generate_set( lambda: random_data.msin() , population))
@@ -64,11 +65,8 @@ class MobileOperators:
             num_parts = random_data.partition(number, carriers_per_mcc)
 
             for i,mnc in enumerate(mobile_operators):
-                # print(mnc.country, mnc.country_code, mnc.mcc, mnc.mnc, num_parts[i])
-
+                print(mnc.mnc, mnc.network)
                 mnc.attach_subscribers(msin_parts[i], iemi_parts[i], num_parts[i])
-                # print(mnc.mcc, mnc.mnc, mnc.subscribers)
-                # print("-------")
                 r.append(mnc)
         return r
 
@@ -82,7 +80,7 @@ class Generator:
     def __init__(self, operators):
         self.mobile_operators = operators
 
-    def generate_cdrs(self, mcc_n, subscribers_n, cdr_n):
+    def generate_cdrs_mnc_bound(self, mcc_n, subscribers_n, cdr_n):
         self.mncs = self.mobile_operators.select_random_mcc_with_population(mcc_n, subscribers_n)
         dt = datetime.datetime.utcnow()
         print("Sequence|IMSI|IMEI|Usage Type|MSISDN|Call date|Call time|Duration(sec)|Bytes Rx|Bytes Tx|2nd Party IMSI|2nd Party MSISDN")
@@ -114,7 +112,7 @@ class Generator:
 def start(mcc, nn, cdrs):
     operators = MobileOperators('./mcc-mnc-table.csv')
     gen = Generator(operators)
-    gen.generate_cdrs(mcc, nn, cdrs)
+    gen.generate_cdrs_mnc_bound(mcc, nn, cdrs)
 
 def main():
     if len(sys.argv) < 3:
