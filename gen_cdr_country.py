@@ -76,7 +76,9 @@ def main():
     gen = Generator(operators)
     mncs = gen.test(op, nn)
     for m in mncs:
-        print(m.iso, m.network,  m.subscribers)
+        print(m.iso, m.country_code, m.mcc, m.mnc, m.network)
+        for s in m.subscribers:
+            print("\t", s)
 
 
 
