@@ -7,7 +7,7 @@ from typing import NamedTuple
 
 class Subscriber(NamedTuple):
     msin  : str
-    iemi  : str
+    imei  : str
     number: str
 
 
@@ -22,11 +22,11 @@ class MobileOperator:
 
     def generates_subscribers(self, n):
         msin = list(random_data.generate_set( lambda: random_data.msin() , n))
-        iemi = list(random_data.generate_set( lambda: random_data.imei() , n))
+        imei = list(random_data.generate_set( lambda: random_data.imei() , n))
         number = list(random_data.generate_set( lambda: random_data.subscriber_number(9) , n))
         self.subscribers = []
         for i in range(n):
-            self.subscribers.append(Subscriber(msin[i], iemi[i], self.country_code + '0' + number[i]))
+            self.subscribers.append(Subscriber(msin[i], imei[i], self.country_code + '0' + number[i]))
 
 class MobileOperators:
     def __init__(self, file_name):
@@ -78,7 +78,7 @@ class Generator:
                 print("\t", s)
 
     def __gen_cdr(self, parties):
-        return [parties[0].iemi, parties[0].msin, parties[0].number, parties[1].number]
+        return [parties[0].imei, parties[0].msin, parties[0].number, parties[1].number]
 
 
 
