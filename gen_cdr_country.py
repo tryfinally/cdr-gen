@@ -52,6 +52,9 @@ class MobileOperators:
     def select_random_mcc_with_population(self, countries_n, subscribers_n):
         return self.generate_cdr_for_countries(random.sample(self.by_mcc.keys(), countries_n), subscribers_n)
 
+    def select_mccs_with_population(self, mcc_list, subscribers_n):
+        return self.generate_cdr_for_countries(mcc_list, subscribers_n)
+
     def generate_cdr_for_countries(self, mcc_list, subscribers_n):
         r = []
         for k in mcc_list:
@@ -80,11 +83,10 @@ class MobileOperators:
             return ops[1:] # drop header first line
 
 class Generator:
-    def __init__(self, operators):
-        self.mobile_operators = operators
+    def __init__(self, mnc_list):
+        self.mncs = mnc_list
 
-    def generate_cdrs_mnc_bound(self, mcc_n, subscribers_n, cdr_n):
-        self.mncs = self.mobile_operators.select_random_mcc_with_population(mcc_n, subscribers_n)
+    def generate_cdrs_mnc_bound(self, cdr_n):
         dt = datetime.datetime.utcnow()
         print("Sequence|IMSI|IMEI|Usage Type|MSISDN|Call date|Call time|Duration(sec)|Bytes Rx|Bytes Tx|2nd Party IMSI|2nd Party MSISDN")
         cdrs = []
@@ -94,9 +96,6 @@ class Generator:
             cdr = self.__gen_cdr(parties, i, dt.date(), dt.time())
             dt = dt + datetime.timedelta(microseconds=random.randrange(2000, 8000))
             print("|".join(map(str, cdr)))
-
-    def gen_operators_population(self, mcc_n, subscribers_n):
-        self.mncs = self.mobile_operators.select_random_mcc_with_population(mcc_n, subscribers_n)
 
     def log(self):
         for m in self.mncs:
@@ -112,10 +111,10 @@ class Generator:
         s_msisdn = s.msisdn if usage != "D" else ""
         return [seq, f.imsi, f.imei, usage, f.msisdn, date, time, duration, down, up, s_imsi, s_msisdn]
 
-def start(mcc, nn, cdrs):
+def start(mcc_n, subscribers_n, cdr_n):
     operators = MobileOperators('./mcc-mnc-table.csv')
-    gen = Generator(operators)
-    gen.generate_cdrs_mnc_bound(mcc, nn, cdrs)
+    gen = Generator(operators.select_random_mcc_with_population(mcc_n, subscribers_n))
+    gen.generate_cdrs_mnc_bound(cdr_n)
 
 def main():
     if len(sys.argv) < 3:
