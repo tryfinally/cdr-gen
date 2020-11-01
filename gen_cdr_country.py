@@ -8,7 +8,8 @@ from typing import NamedTuple
 class Subscriber(NamedTuple):
     msin  : str
     imei  : str
-    number: str
+    imsi  : str
+    msisdn: str
 
 
 class MobileOperator:
@@ -26,7 +27,9 @@ class MobileOperator:
         number = list(random_data.generate_set( lambda: random_data.subscriber_number(9) , n))
         self.subscribers = []
         for i in range(n):
-            self.subscribers.append(Subscriber(msin[i], imei[i], self.country_code + '0' + number[i]))
+            imsi = self.mcc + self.mnc + msin[i]
+            msisdn = self.country_code + '0' + number[i]
+            self.subscribers.append(Subscriber(msin[i], imei[i], imsi, msisdn))
 
 class MobileOperators:
     def __init__(self, file_name):
@@ -55,6 +58,7 @@ class Generator:
         self.gen_operators_population(operators_n, subscribers_n)
         self.log()
 
+        print("Sequence|IMSI|IMEI|Usage Type|MSISDN|Call date|Call time|Duration(sec)|Bytes Rx|Bytes Tx|2nd Party IMSI|2nd Party MSISDN")
         cdrs = []
         for i in range(cdr_n):
             mnc = random.sample(self.mncs, 1)
@@ -63,13 +67,13 @@ class Generator:
             print("|".join(map(str, cdr)))
 
 
-    def gen_operators_population(self, operators, subscribers):
+    def gen_operators_population(self, operators_n, subscribers_n):
         self.mncs = list()
-        for mcc in self.mobile_operators.select_random_mcc(operators):
+        for mcc in self.mobile_operators.select_random_mcc(operators_n):
             self.mncs.extend(mcc[1])
 
         for mnc in self.mncs:
-            mnc.generates_subscribers(subscribers)
+            mnc.generates_subscribers(subscribers_n)
 
     def log(self):
         for m in self.mncs:
@@ -78,7 +82,7 @@ class Generator:
                 print("\t", s)
 
     def __gen_cdr(self, parties):
-        return [parties[0].imei, parties[0].msin, parties[0].number, parties[1].number]
+        return [parties[0].imei, parties[0].imsi, parties[0].msisdn, parties[1].msisdn]
 
 
 
