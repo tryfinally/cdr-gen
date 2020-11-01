@@ -4,7 +4,9 @@ import csv
 class MobileOperators:
     def __init__(self, file_name):
         self.operators = self.__load_operators(file_name)
-        self.by_mcc = {rows[0]:rows[0:] for rows in self.operators}
+        self.by_mcc = {}
+        for row in self.operators:
+            self.by_mcc.setdefault(row[0], []).append(row)
 
     def get_operators_by_country(self, mcc):
         return self.by_mcc[mcc]
