@@ -111,9 +111,12 @@ class Generator:
         s_msisdn = s.msisdn if usage != "D" else ""
         return [seq, f.imsi, f.imei, usage, f.msisdn, date, time, duration, down, up, s_imsi, s_msisdn]
 
-def start(mcc_n, subscribers_n, cdr_n):
+def start(mcc_n, subscribers_n, cdr_n, mcc_list):
     operators = MobileOperators('./mcc-mnc-table.csv')
-    gen = Generator(operators.select_random_mcc_with_population(mcc_n, subscribers_n))
+    if mcc_list is None:
+        gen = Generator(operators.select_random_mcc_with_population(mcc_n, subscribers_n))
+    else:
+        gen = Generator(operators.select_mccs_with_population(mcc_list, subscribers_n))
     gen.generate_cdrs_mnc_bound(cdr_n)
 
 def main():
@@ -124,8 +127,11 @@ def main():
     mcc = int(sys.argv[1])
     nn = int(sys.argv[2])
     cdrs = int(sys.argv[3])
-    start(mcc, nn, cdrs)
+
+    mcc_list = [mcc for mcc in sys.argv[4:]] if len(sys.argv) > 4 else None
+
+    start(mcc, nn, cdrs, mcc_list)
 
 if __name__ == "__main__":
     main()
-    # start(1, 10, 0)
+    # start(1, 10, 20, ['425'])
