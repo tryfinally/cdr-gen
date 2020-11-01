@@ -1,5 +1,6 @@
 import sys
 import csv
+import random
 import random_data
 from collections import namedtuple
 from typing import NamedTuple
@@ -37,11 +38,26 @@ class MobileOperators:
     def get_operators_by_country(self, mcc):
         return self.by_mcc[mcc]
 
+    def select_random_mcc(self, n):
+        return random.sample(self.by_mcc.items(), n)
+
     def __load_operators(self,file_name):
         with open(file_name, mode='r') as infile:
             reader = csv.reader(infile)
             ops = list(reader)
             return ops[1:] # drop header first line
+
+class Generator:
+    def __init__(self, operators):
+        self.mobile_operators = operators
+
+    def test(self, n):
+        mccs = self.mobile_operators.select_random_mcc(n)
+        for mcc in mccs:
+            for mo in mcc[1]:
+                mo.generates_subscribers(n)
+                print(mo.iso, mo.mcc, mo.mnc, mo.country_code, mo.subscribers)
+
 
 def main():
     if len(sys.argv) < 3:
@@ -52,13 +68,10 @@ def main():
     nn = int(sys.argv[2])
 
     operators = MobileOperators('./mcc-mnc-table.csv')
-    country = operators.get_operators_by_country(cc)
+    gen = Generator(operators)
+    gen.test(nn)
 
-    for c in country:
-        print(c.iso, c.country_code, c.mcc, c.mnc, c.network, c.country)
 
-    country[1].generates_subscribers(nn)
-    print(country[1].subscribers)
 
 if __name__ == "__main__":
     main()
