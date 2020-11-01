@@ -50,10 +50,13 @@ class MobileOperators:
         return self.by_mcc[mcc]
 
     def select_random_mcc_with_population(self, countries_n, subscribers_n):
+        return self.generate_cdr_for_countries(random.sample(self.by_mcc.keys(), countries_n), subscribers_n)
+
+    def generate_cdr_for_countries(self, mcc_list, subscribers_n):
         r = []
-        for k in random.sample(self.by_mcc.keys(), countries_n):
+        for k in mcc_list:
             mobile_operators = self.by_mcc[k]
-            print(mobile_operators[0].country)
+            print(mobile_operators[0].country, mobile_operators[0].mcc)
             carriers_per_mcc = len(mobile_operators)
             population = carriers_per_mcc * subscribers_n
             msin = list(random_data.generate_set( lambda: random_data.msin() , population))
