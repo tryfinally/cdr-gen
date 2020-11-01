@@ -51,16 +51,36 @@ class Generator:
     def __init__(self, operators):
         self.mobile_operators = operators
 
-    def test(self, operators, subscribers):
+    def generate_cdrs(self, operators_n, subscribers_n, cdr_n):
+        self.gen_operators_population(operators_n, subscribers_n)
+        self.log()
 
-        mncs = list()
+        cdrs = []
+        for i in range(cdr_n):
+            mnc = random.sample(self.mncs, 1)
+            parties = random.sample(mnc[0].subscribers, 2)
+            cdr = self.__gen_cdr(parties)
+            print("|".join(map(str, cdr)))
+
+
+    def gen_operators_population(self, operators, subscribers):
+        self.mncs = list()
         for mcc in self.mobile_operators.select_random_mcc(operators):
-            mncs.extend(mcc[1])
+            self.mncs.extend(mcc[1])
 
-        for mnc in mncs:
+        for mnc in self.mncs:
             mnc.generates_subscribers(subscribers)
 
-        return mncs
+    def log(self):
+        for m in self.mncs:
+            print(m.iso, m.country_code, m.mcc, m.mnc, m.network)
+            for s in m.subscribers:
+                print("\t", s)
+
+    def __gen_cdr(self, parties):
+        return [parties[0].iemi, parties[0].msin, parties[0].number, parties[1].number]
+
+
 
 
 def main():
@@ -71,14 +91,13 @@ def main():
 
     op = int(sys.argv[1])
     nn = int(sys.argv[2])
+    cdrs = int(sys.argv[3])
 
     operators = MobileOperators('./mcc-mnc-table.csv')
     gen = Generator(operators)
-    mncs = gen.test(op, nn)
-    for m in mncs:
-        print(m.iso, m.country_code, m.mcc, m.mnc, m.network)
-        for s in m.subscribers:
-            print("\t", s)
+    gen.generate_cdrs(op, nn, cdrs)
+
+
 
 
 
