@@ -33,3 +33,20 @@ def generate_set(gen, n):
     while len(s) < n:
         s.add(gen())
     return s
+
+def random_usage():
+    u =  random.choice(["MOC", "MTC", "SMS-O", "SMS-MT", "D"])
+    upload = 0
+    download = 0
+    duration = 0
+    if u == "D":
+        upload = random.randrange(512, 1024*1024/2)
+        download = random.randrange(1024, 10*1024*1024)
+    if u == "MOC" or u == "MTC":
+        duration = random.randrange(20, 1200)
+
+    return (u, duration, download, upload)
+
+def partition(list_in, n):
+    random.shuffle(list_in)
+    return [list_in[i::n] for i in range(n)]
