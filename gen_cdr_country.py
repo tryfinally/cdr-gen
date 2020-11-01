@@ -1,6 +1,7 @@
 import sys
 import csv
 import random
+import datetime
 import random_data
 from collections import namedtuple
 from typing import NamedTuple
@@ -57,13 +58,14 @@ class Generator:
     def generate_cdrs(self, operators_n, subscribers_n, cdr_n):
         self.gen_operators_population(operators_n, subscribers_n)
         self.log()
-
+        dt = datetime.datetime.utcnow()
         print("Sequence|IMSI|IMEI|Usage Type|MSISDN|Call date|Call time|Duration(sec)|Bytes Rx|Bytes Tx|2nd Party IMSI|2nd Party MSISDN")
         cdrs = []
         for i in range(cdr_n):
             mnc = random.sample(self.mncs, 1)
             parties = random.sample(mnc[0].subscribers, 2)
-            cdr = self.__gen_cdr(parties)
+            cdr = self.__gen_cdr(parties, i, dt.date(), dt.time())
+            dt = dt + datetime.timedelta(microseconds=random.randrange(2000, 8000))
             print("|".join(map(str, cdr)))
 
 
@@ -81,8 +83,13 @@ class Generator:
             for s in m.subscribers:
                 print("\t", s)
 
-    def __gen_cdr(self, parties):
-        return [parties[0].imei, parties[0].imsi, parties[0].msisdn, parties[1].msisdn]
+    def __gen_cdr(self, parties, seq, date, time):
+        f,s = parties
+        usage,duration,down,up = random_data.random_usage()
+
+        s_imsi = s.imsi if usage != "D" else ""
+        s_msisdn = s.msisdn if usage != "D" else ""
+        return [seq, f.imsi, f.imei, usage, f.msisdn, date, time, duration, down, up, s_imsi, s_msisdn]
 
 
 
