@@ -2,6 +2,7 @@ import sys
 import csv
 import random
 import datetime
+import argparse
 import random_data
 from collections import namedtuple
 from typing import NamedTuple
@@ -49,17 +50,17 @@ class MobileOperators:
     def get_operators_by_country(self, mcc):
         return self.by_mcc[mcc]
 
-    def select_random_mcc_with_population(self, countries_n, subscribers_n):
-        return self.generate_cdr_for_countries(random.sample(self.by_mcc.keys(), countries_n), subscribers_n)
+    def select_random_mcc_with_population(self, countries_n, subscribers_n, verbose=False):
+        return self.generate_cdr_for_countries(random.sample(self.by_mcc.keys(), countries_n), subscribers_n, verbose)
 
-    def select_mccs_with_population(self, mcc_list, subscribers_n):
-        return self.generate_cdr_for_countries(mcc_list, subscribers_n)
+    def select_mccs_with_population(self, mcc_list, subscribers_n, verbose=False):
+        return self.generate_cdr_for_countries(mcc_list, subscribers_n, verbose)
 
-    def generate_cdr_for_countries(self, mcc_list, subscribers_n):
+    def generate_cdr_for_countries(self, mcc_list, subscribers_n, verbose=False):
         r = []
         for k in mcc_list:
             mobile_operators = self.by_mcc[k]
-            print(mobile_operators[0].country, mobile_operators[0].mcc)
+            if verbose: print(mobile_operators[0].country, mobile_operators[0].mcc, file = sys.stderr)
             carriers_per_mcc = len(mobile_operators)
             population = carriers_per_mcc * subscribers_n
             msin = list(random_data.generate_set( lambda: random_data.msin() , population))
@@ -71,7 +72,7 @@ class MobileOperators:
             num_parts = random_data.partition(number, carriers_per_mcc)
 
             for i,mnc in enumerate(mobile_operators):
-                print(mnc.mnc, mnc.network)
+                if verbose: print(mnc.mnc, mnc.network, file = sys.stderr)
                 mnc.attach_subscribers(msin_parts[i], iemi_parts[i], num_parts[i])
                 r.append(mnc)
         return r
@@ -111,27 +112,41 @@ class Generator:
         s_msisdn = s.msisdn if usage != "D" else ""
         return [seq, f.imsi, f.imei, usage, f.msisdn, date, time, duration, down, up, s_imsi, s_msisdn]
 
-def start(mcc_n, subscribers_n, cdr_n, mcc_list):
-    operators = MobileOperators('./mcc-mnc-table.csv')
-    if mcc_list is None:
-        gen = Generator(operators.select_random_mcc_with_population(mcc_n, subscribers_n))
+def simulate(args):
+    # def start(mcc_n, subscribers_n, cdr_n, mcc_list):
+    operators = MobileOperators(args.mcc_table_file)
+    if args.mcc_n != 0:
+        gen = Generator(operators.select_random_mcc_with_population(args.mcc_n, args.population_n, args.verbose_f))
     else:
-        gen = Generator(operators.select_mccs_with_population(mcc_list, subscribers_n))
-    gen.generate_cdrs_mnc_bound(cdr_n)
+        gen = Generator(operators.select_mccs_with_population(args.mcc_list, args.population_n, args.verbose_f))
+    gen.generate_cdrs_mnc_bound(args.cdr_n)
+
 
 def main():
-    if len(sys.argv) < 3:
-            print("Usage: ", sys.argv[0], "countries subscribers cdrs")
-            sys.exit(1)
+    parser = argparse.ArgumentParser(description='CDR simulator')
+    parser.add_argument('cdr_n', action='store', type=int,
+                        help='Number of CDRs to generate')
 
-    mcc = int(sys.argv[1])
-    nn = int(sys.argv[2])
-    cdrs = int(sys.argv[3])
+    mcc_group = parser.add_mutually_exclusive_group()
+    mcc_group.add_argument('--countries', '-c', action='store', dest='mcc_n', type=int, default=0,
+                            help='how many countries to randomly select')
+    mcc_group.add_argument('--mcc-list', '-m', action='store', dest='mcc_list', nargs='*', default=['425'],
+                            help='list of MCCs to select thier MNCs')
 
-    mcc_list = [mcc for mcc in sys.argv[4:]] if len(sys.argv) > 4 else None
+    parser.add_argument('--population', '-p', action='store', dest='population_n', type=int, default=100,
+                        help='population of ubscribers per mobile carrier')
 
-    start(mcc, nn, cdrs, mcc_list)
+    parser.add_argument('--verbose', '-v', action='store_true', dest='verbose_f', default=False,
+                        help='print simulation parameters to stderr')
+
+
+    parser.add_argument('--cross-carrier', '-x', action='store_true', dest='x_carrier_cdrs', default=False,
+                        help='generate cross carrier cdrs')
+
+    parser.add_argument('--version', action='version', version='%(prog)s 1.0')
+
+    args = parser.parse_args()
+    simulate(args)
 
 if __name__ == "__main__":
     main()
-    # start(1, 10, 20, ['425'])
