@@ -139,9 +139,8 @@ def main():
     parser.add_argument('--verbose', '-v', action='store_true', dest='verbose_f', default=False,
                         help='print simulation parameters to stderr')
 
-
-    parser.add_argument('--cross-carrier', '-x', action='store_true', dest='x_carrier_cdrs', default=False,
-                        help='generate cross carrier cdrs')
+    parser.add_argument('--mcc_table', '-f', action='store', dest='mcc_table_file', default='./mcc-mnc-table.csv',
+                        help='csv file with mcc mnc data')
 
     parser.add_argument('--version', action='version', version='%(prog)s 1.0')
 
