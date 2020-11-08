@@ -136,6 +136,12 @@ def main():
     parser.add_argument('--population', '-p', action='store', dest='population_n', type=int, default=100,
                         help='population of ubscribers per mobile carrier')
 
+    parser.add_argument('--cross-carrier', '-x', action='store_true', dest='x_carrier_cdrs', default=False,
+                        help='generate cross carrier cdrs')
+
+    parser.add_argument('--cross-country', '-z', action='store_true', dest='x_country_cdrs', default=False,
+                        help='generate cross country cdrs')
+
     parser.add_argument('--verbose', '-v', action='store_true', dest='verbose_f', default=False,
                         help='print simulation parameters to stderr')
 
