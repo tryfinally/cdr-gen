@@ -1,4 +1,4 @@
-# cdr-gen
+# CDR generator
 
 generate random CDR files
 
@@ -36,3 +36,24 @@ Each record describes one usage and is composed of fields seprated by '|'.
 10. Bytes uploaded
 11. Second Party IMSI (if MO call or SMS)
 12. Second Party MSISDN (if MO call or SMS)
+
+---
+
+# Usage
+
+sample runs:
+-
+`python3 gen_cdr_country.py 1000 -m 420 -x 40`
+generate 1000 CDRs for MCC 420 - Saudi Arabia
+with 0.4 probality of cross MNC CDRs. Saui Arabia has 6 mobile operators.
+
+
+`python3 gen_cdr_country.py 10 -m 420 422`\
+generate 10 CDRs for MCC: 420, 422  (Saudi Arabia and Oman).\
+All CDRs ar intra MNC
+
+`python3 gen_cdr_country.py 0 -m 234 -v`\
+generate 0 CDRs for UK which has 44 mobile operators. But list all MNC codes for operators in UK.
+
+`python3 gen_cdr_country.py 100000 -c 13 -x 20 -v`\
+generate 100,000 CDRs for a random selection of 13 countries. With a probality of inter MNC CDR of 20/100. Also, print on stderr details of countries selected.
