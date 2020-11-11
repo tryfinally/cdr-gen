@@ -93,14 +93,16 @@ class Generator:
         cdrs = []
         for i in range(cdr_n):
             sameCarrier = random.choices([True, False], [100-x_carrier_cdrs, x_carrier_cdrs])
-            if sameCarrier:
+            if sameCarrier[0]:
                 mnc = random.sample(self.mncs, 1)
                 parties = random.sample(mnc[0].subscribers, 2)
+                # print("intra : ", parties[0], "\n\t", parties[1])
             else:
                 mnc2 = random.sample(self.mncs, 2)
                 s1 = random.sample(mnc2[0].subscribers, 1)
                 s2 = random.sample(mnc2[1].subscribers, 1)
                 parties = [s1[0], s2[0]]
+                # print("inter : ", parties[0], "\n\t", parties[1])
 
             cdr = self.__gen_cdr(parties, i, dt.date(), dt.time())
             dt = dt + datetime.timedelta(microseconds=random.randrange(2000, 8000))
@@ -145,7 +147,7 @@ def main():
                         help='population of ubscribers per mobile carrier')
 
     parser.add_argument('--cross-carrier', '-x', action='store', dest='x_carrier_cdrs', type=int, default=0,
-                        help='generate cross carrier cdrs')
+                        help='generate cross carrier cdrs probality X_CARRIER_CDRS/100')
 
     parser.add_argument('--cross-country', '-z', action='store', dest='x_country_cdrs', type=int, default=0,
                         help='generate cross country cdrs')
