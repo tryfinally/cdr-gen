@@ -92,7 +92,8 @@ class Generator:
         print("Sequence|IMSI|IMEI|Usage Type|MSISDN|Call date|Call time|Duration(sec)|Bytes Rx|Bytes Tx|2nd Party IMSI|2nd Party MSISDN")
         cdrs = []
         for i in range(cdr_n):
-            if x_carrier_cdrs == 0:
+            sameCarrier = random.choices([True, False], [100-x_carrier_cdrs, x_carrier_cdrs])
+            if sameCarrier:
                 mnc = random.sample(self.mncs, 1)
                 parties = random.sample(mnc[0].subscribers, 2)
             else:
