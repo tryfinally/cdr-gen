@@ -87,13 +87,20 @@ class Generator:
     def __init__(self, mnc_list):
         self.mncs = mnc_list
 
-    def generate_cdrs_mnc_bound(self, cdr_n):
+    def generate_cdrs_mnc_bound(self, cdr_n, x_carrier_cdrs):
         dt = datetime.datetime.utcnow()
         print("Sequence|IMSI|IMEI|Usage Type|MSISDN|Call date|Call time|Duration(sec)|Bytes Rx|Bytes Tx|2nd Party IMSI|2nd Party MSISDN")
         cdrs = []
         for i in range(cdr_n):
-            mnc = random.sample(self.mncs, 1)
-            parties = random.sample(mnc[0].subscribers, 2)
+            if x_carrier_cdrs == 0:
+                mnc = random.sample(self.mncs, 1)
+                parties = random.sample(mnc[0].subscribers, 2)
+            else:
+                mnc2 = random.sample(self.mncs, 2)
+                s1 = random.sample(mnc2[0].subscribers, 1)
+                s2 = random.sample(mnc2[1].subscribers, 1)
+                parties = [s1[0], s2[0]]
+
             cdr = self.__gen_cdr(parties, i, dt.date(), dt.time())
             dt = dt + datetime.timedelta(microseconds=random.randrange(2000, 8000))
             print("|".join(map(str, cdr)))
@@ -119,7 +126,7 @@ def simulate(args):
         gen = Generator(operators.select_random_mcc_with_population(args.mcc_n, args.population_n, args.verbose_f))
     else:
         gen = Generator(operators.select_mccs_with_population(args.mcc_list, args.population_n, args.verbose_f))
-    gen.generate_cdrs_mnc_bound(args.cdr_n)
+    gen.generate_cdrs_mnc_bound(args.cdr_n, args.x_carrier_cdrs)
 
 
 def main():
@@ -136,10 +143,10 @@ def main():
     parser.add_argument('--population', '-p', action='store', dest='population_n', type=int, default=100,
                         help='population of ubscribers per mobile carrier')
 
-    parser.add_argument('--cross-carrier', '-x', action='store_true', dest='x_carrier_cdrs', default=False,
+    parser.add_argument('--cross-carrier', '-x', action='store', dest='x_carrier_cdrs', type=int, default=0,
                         help='generate cross carrier cdrs')
 
-    parser.add_argument('--cross-country', '-z', action='store_true', dest='x_country_cdrs', default=False,
+    parser.add_argument('--cross-country', '-z', action='store', dest='x_country_cdrs', type=int, default=0,
                         help='generate cross country cdrs')
 
     parser.add_argument('--verbose', '-v', action='store_true', dest='verbose_f', default=False,
