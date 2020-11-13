@@ -92,17 +92,17 @@ class Generator:
         print("Sequence|IMSI|IMEI|Usage Type|MSISDN|Call date|Call time|Duration(sec)|Bytes Rx|Bytes Tx|2nd Party IMSI|2nd Party MSISDN")
         cdrs = []
         for i in range(cdr_n):
-            sameCarrier = random.choices([True, False], [100-x_carrier_cdrs, x_carrier_cdrs])
-            if sameCarrier[0]:
+            sameCarrier = random.choices([True, False], [100-x_carrier_cdrs, x_carrier_cdrs])[0]
+            if sameCarrier:
                 mnc = random.sample(self.mncs, 1)
                 parties = random.sample(mnc[0].subscribers, 2)
-                # print("intra : ", parties[0], "\n\t", parties[1])
+                print("intra : ", parties[0], "\n\t", parties[1])
             else:
                 mnc2 = random.sample(self.mncs, 2)
-                s1 = random.sample(mnc2[0].subscribers, 1)
-                s2 = random.sample(mnc2[1].subscribers, 1)
-                parties = [s1[0], s2[0]]
-                # print("inter : ", parties[0], "\n\t", parties[1])
+                s1 = random.sample(mnc2[0].subscribers, 1)[0]
+                s2 = random.sample(mnc2[1].subscribers, 1)[0]
+                parties = [s1, s2]
+                print("inter : ", parties[0], "\n\t", parties[1])
 
             cdr = self.__gen_cdr(parties, i, dt.date(), dt.time())
             dt = dt + datetime.timedelta(microseconds=random.randrange(2000, 8000))
