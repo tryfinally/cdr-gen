@@ -141,7 +141,7 @@ def main():
     mcc_group.add_argument('--mcc-list', '-m', action='store', dest='mcc_list', nargs='*', default=['425'],
                             help='list of MCCs to select thier MNCs')
 
-    parser.add_argument('--population', '-p', action='store', dest='population_n', type=int, default=100,
+    parser.add_argument('--population', '-p', action='store', dest='population_n', type=int, default=1000,
                         help='population of ubscribers per mobile carrier')
 
     parser.add_argument('--cross-carrier', '-x', action='store', dest='x_carrier_cdrs', type=int, default=0,
