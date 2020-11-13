@@ -96,13 +96,11 @@ class Generator:
             if sameCarrier:
                 mnc = random.sample(self.mncs, 1)
                 parties = random.sample(mnc[0].subscribers, 2)
-                print("intra : ", parties[0], "\n\t", parties[1])
             else:
                 mnc2 = random.sample(self.mncs, 2)
                 s1 = random.sample(mnc2[0].subscribers, 1)[0]
                 s2 = random.sample(mnc2[1].subscribers, 1)[0]
                 parties = [s1, s2]
-                print("inter : ", parties[0], "\n\t", parties[1])
 
             cdr = self.__gen_cdr(parties, i, dt.date(), dt.time())
             dt = dt + datetime.timedelta(microseconds=random.randrange(2000, 8000))
