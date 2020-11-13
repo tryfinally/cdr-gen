@@ -159,6 +159,11 @@ def main():
     parser.add_argument('--version', action='version', version='%(prog)s 1.0')
 
     args = parser.parse_args()
+    if args.x_country_cdrs > 0:
+        if args.mcc_n < 2 or len(args.mcc_list) < 2:
+            print("You need at least 2 countries to get some international calls simulated.")
+            print("use -c or -m options")
+            exit(1)
     simulate(args)
 
 if __name__ == "__main__":
