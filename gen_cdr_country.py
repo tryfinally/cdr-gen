@@ -87,12 +87,12 @@ class Generator:
     def __init__(self, mnc_list):
         self.mncs = mnc_list
 
-    def generate_cdrs_mnc_bound(self, cdr_n, x_carrier_cdrs):
+    def generate_cdrs_mnc_bound(self, args):
         dt = datetime.datetime.utcnow()
         print("Sequence|IMSI|IMEI|Usage Type|MSISDN|Call date|Call time|Duration(sec)|Bytes Rx|Bytes Tx|2nd Party IMSI|2nd Party MSISDN")
         cdrs = []
-        for i in range(cdr_n):
-            sameCarrier = random.choices([True, False], [100-x_carrier_cdrs, x_carrier_cdrs])[0]
+        for i in range(args.cdr_n):
+            sameCarrier = random.choices([True, False], [100-args.x_carrier_cdrs, args.x_carrier_cdrs])[0]
             if sameCarrier:
                 mnc = random.sample(self.mncs, 1)
                 parties = random.sample(mnc[0].subscribers, 2)
@@ -127,7 +127,7 @@ def simulate(args):
         gen = Generator(operators.select_random_mcc_with_population(args.mcc_n, args.population_n, args.verbose_f))
     else:
         gen = Generator(operators.select_mccs_with_population(args.mcc_list, args.population_n, args.verbose_f))
-    gen.generate_cdrs_mnc_bound(args.cdr_n, args.x_carrier_cdrs)
+    gen.generate_cdrs_mnc_bound(args)
 
 
 def main():
