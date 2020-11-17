@@ -158,8 +158,8 @@ def main():
     parser.add_argument('--population', '-p', action='store', dest='population_n', type=int, default=1000,
                         help='population of subscribers per mobile carrier')
 
-    parser.add_argument('--cross-carrier', '-x', action='store', dest='x_carrier_cdrs', type=int, default=0,
-                        help='generate cross carrier cdrs probality X_CARRIER_CDRS/100')
+    parser.add_argument('--cross-carrier', '-x', action='store', dest='x_carrier_cdrs', type=int, default=20,
+                        help='generate cross carrier cdrs with probality = X_CARRIER_CDRS/100.  default=20')
 
     parser.add_argument('--cross-country', '-z', action='store', dest='x_country_cdrs', type=int, default=0,
                         help='generate cross country cdrs')
