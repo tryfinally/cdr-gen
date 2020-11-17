@@ -60,7 +60,7 @@ class MobileOperators:
         r = []
         for k in mcc_list:
             mobile_operators = self.by_mcc[k]
-            if verbose: print(mobile_operators[0].country, mobile_operators[0].mcc, file = sys.stderr)
+            if verbose: print(mobile_operators[0].mcc, mobile_operators[0].country, file = sys.stderr)
             carriers_per_mcc = len(mobile_operators)
             population = carriers_per_mcc * subscribers_n
             msin = list(random_data.generate_set( lambda: random_data.msin() , population))
@@ -72,7 +72,7 @@ class MobileOperators:
             num_parts = random_data.partition(number, carriers_per_mcc)
 
             for i,mnc in enumerate(mobile_operators):
-                if verbose: print(mnc.mnc, mnc.network, file = sys.stderr)
+                if verbose: print("\t", mnc.mnc, mnc.network, file = sys.stderr)
                 mnc.attach_subscribers(msin_parts[i], iemi_parts[i], num_parts[i])
                 r.append(mnc)
         return r
