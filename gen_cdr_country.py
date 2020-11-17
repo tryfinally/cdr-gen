@@ -101,8 +101,7 @@ class Generator:
                 orig_country,dest_country = random.sample(list_mcc, 2)
                 mnc_a = random.sample(self.by_mcc[orig_country], 1)[0]
                 mnc_b = random.sample(self.by_mcc[dest_country], 1)[0]
-                parties = [random.sample(mnc_a.subscribers, 1)[0], random.sample(mnc_a.subscribers, 1)[0]]
-                print("X", parties)
+                parties = [random.sample(mnc_a.subscribers, 1)[0], random.sample(mnc_b.subscribers, 1)[0]]
             else:
                 orig_country = random.sample(list_mcc, 1)[0]
                 if random.choices([True, False], [args.x_carrier_cdrs, 100-args.x_carrier_cdrs])[0]:
