@@ -86,21 +86,25 @@ class MobileOperators:
 class Generator:
     def __init__(self, mnc_list):
         self.mncs = mnc_list
+        self.by_mcc = {mnc.mcc:mnc for mnc in mnc_list }
 
-    def generate_cdrs_mnc_bound(self, args):
+    def generate_cdrs_mnc_bound(self, args, operators):
+        list_mcc = list(self.by_mcc)
         dt = datetime.datetime.utcnow()
         print("Sequence|IMSI|IMEI|Usage Type|MSISDN|Call date|Call time|Duration(sec)|Bytes Rx|Bytes Tx|2nd Party IMSI|2nd Party MSISDN")
         cdrs = []
         for i in range(args.cdr_n):
-            sameCarrier = random.choices([True, False], [100-args.x_carrier_cdrs, args.x_carrier_cdrs])[0]
-            if sameCarrier:
-                mnc = random.sample(self.mncs, 1)
-                parties = random.sample(mnc[0].subscribers, 2)
+            if random.choices([True, False], [args.x_country_cdrs, 100-args.x_country_cdrs])[0]:
+                orig_country,dest_country = random.sample(list_mcc, 2)
+                mnc_a = random.sample(self.by_mcc[orig_country], 1)[0]
+                mnc_b = random.sample(self.by_mcc[dest_country], 1)[0]
+                parties = [random.sample(mnc_a.subscribers, 1)[0], random.sample(mnc_a.subscribers, 1)[0]]
+                print("X", parties)
             else:
-                mnc2 = random.sample(self.mncs, 2)
-                s1 = random.sample(mnc2[0].subscribers, 1)[0]
-                s2 = random.sample(mnc2[1].subscribers, 1)[0]
-                parties = [s1, s2]
+                orig_country = random.sample(list_mcc, 1)[0]
+                # same mcc, different mnc
+                mnc_a, mnc_b = random.sample(operators.by_mcc[orig_country], 2)
+                parties = [random.sample(mnc_a.subscribers, 1)[0], random.sample(mnc_b.subscribers, 1)[0]]
 
             cdr = self.__gen_cdr(parties, i, dt.date(), dt.time())
             dt = dt + datetime.timedelta(microseconds=random.randrange(2000, 8000))
@@ -127,7 +131,7 @@ def simulate(args):
         gen = Generator(operators.select_random_mcc_with_population(args.mcc_n, args.population_n, args.verbose_f))
     else:
         gen = Generator(operators.select_mccs_with_population(args.mcc_list, args.population_n, args.verbose_f))
-    gen.generate_cdrs_mnc_bound(args)
+    gen.generate_cdrs_mnc_bound(args, operators)
 
 
 def main():
@@ -160,10 +164,11 @@ def main():
 
     args = parser.parse_args()
     if args.x_country_cdrs > 0:
-        if args.mcc_n < 2 or len(args.mcc_list) < 2:
+        if args.mcc_n < 2 and len(args.mcc_list) < 2:
             print("You need at least 2 countries to get some international calls simulated.")
             print("use -c or -m options")
             exit(1)
+
     simulate(args)
 
 if __name__ == "__main__":
