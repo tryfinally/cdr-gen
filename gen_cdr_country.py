@@ -86,8 +86,9 @@ class MobileOperators:
 class Generator:
     def __init__(self, mnc_list):
         self.mncs = mnc_list
-        self.by_mcc = {mnc.mcc:mnc for mnc in mnc_list }
-        print("by_mcc: ", self.by_mcc)
+        self.by_mcc = {}
+        for m in self.mncs:
+            self.by_mcc.setdefault(m.mcc, []).append(m)
 
     def generate_cdrs_mnc_bound(self, args, operators):
         list_mcc = list(self.by_mcc)
