@@ -87,6 +87,7 @@ class Generator:
     def __init__(self, mnc_list):
         self.mncs = mnc_list
         self.by_mcc = {mnc.mcc:mnc for mnc in mnc_list }
+        print("by_mcc: ", self.by_mcc)
 
     def generate_cdrs_mnc_bound(self, args, operators):
         list_mcc = list(self.by_mcc)
@@ -95,6 +96,7 @@ class Generator:
         cdrs = []
         for i in range(args.cdr_n):
             if random.choices([True, False], [args.x_country_cdrs, 100-args.x_country_cdrs])[0]:
+                # inter-country inter-operator
                 orig_country,dest_country = random.sample(list_mcc, 2)
                 mnc_a = random.sample(self.by_mcc[orig_country], 1)[0]
                 mnc_b = random.sample(self.by_mcc[dest_country], 1)[0]
@@ -102,9 +104,14 @@ class Generator:
                 print("X", parties)
             else:
                 orig_country = random.sample(list_mcc, 1)[0]
-                # same mcc, different mnc
-                mnc_a, mnc_b = random.sample(operators.by_mcc[orig_country], 2)
-                parties = [random.sample(mnc_a.subscribers, 1)[0], random.sample(mnc_b.subscribers, 1)[0]]
+                if random.choices([True, False], [args.x_carrier_cdrs, 100-args.x_carrier_cdrs])[0]:
+                    # intra-country inter-operator
+                    mnc_a, mnc_b = random.sample(operators.by_mcc[orig_country], 2)
+                    parties = [random.sample(mnc_a.subscribers, 1)[0], random.sample(mnc_b.subscribers, 1)[0]]
+                else:
+                    # intra-country intra-operator
+                    mnc_a = random.sample(operators.by_mcc[orig_country], 1)[0]
+                    parties = random.sample(mnc_a.subscribers, 2)
 
             cdr = self.__gen_cdr(parties, i, dt.date(), dt.time())
             dt = dt + datetime.timedelta(microseconds=random.randrange(2000, 8000))
