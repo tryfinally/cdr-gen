@@ -106,7 +106,10 @@ class Generator:
                 orig_country = random.sample(list_mcc, 1)[0]
                 if random.choices([True, False], [args.x_carrier_cdrs, 100-args.x_carrier_cdrs])[0]:
                     # intra-country inter-operator
-                    mnc_a, mnc_b = random.sample(operators.by_mcc[orig_country], 2)
+                    if len(operators.by_mcc[orig_country]) >= 2:
+                        mnc_a, mnc_b = random.sample(operators.by_mcc[orig_country], 2)
+                    else:
+                        mnc_a = mnc_b = random.sample(operators.by_mcc[orig_country], 1)[0]
                     parties = [random.sample(mnc_a.subscribers, 1)[0], random.sample(mnc_b.subscribers, 1)[0]]
                 else:
                     # intra-country intra-operator
