@@ -65,4 +65,4 @@ generate 1000 CDRs occuring a random selection of 10 countries with a 0.2 probab
 and a probality of 0.5 for cross operator if the call is inside selected country.
 
 `python3 gen_cdr_country.py 100000 -z 5 -x 25 -m 530 262 422`\
-generate 100,000 CDRs for calls in New Zeland, germany and United Arab Emirates where the probability of interbational call is 0.05 and the probability of cross operator call inside same country is 0.25.
+Generate 100,000 CDRs for calls in New Zealand, Germany and United Arab Emirates where the probability of international call is 0.05 and the probability of cross operator call inside the same country is 0.25.
