@@ -57,8 +57,8 @@ All CDRs ar intra MNC
 `python3 gen_cdr_country.py 0 -m 234 -v`\
 generate 0 CDRs for UK which has 44 mobile operators. But list all MNC codes for operators in UK.
 
-`python3 gen_cdr_country.py 100000 -c 13 -x 20 -v`\
-generate 100,000 CDRs for a random selection of 13 countries. With a probality of inter MNC CDR of 20/100. Also, print on stderr details of countries selected.
+`python3 gen_cdr_country.py 100000 -c 13 -x 25 -v`\
+Generate 100,000 CDRs for local calls in a random selection of 13 countries. With a 0.25 probability of cross operator call in the same country. Also, print on stdandard error details of countries selected and their mobile operators.
 
 `python3 gen_cdr_country.py 1000 -z 20 -x 50  -c 10`\
 Generate 1000 CDRs occurring a random selection of 10 countries with a 0.2 probability of an international call and a probability of 0.5 for cross operator if the call is inside the selected country.
