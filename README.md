@@ -50,18 +50,20 @@ display usage message.
 generate 1000 CDRs for MCC 420 - Saudi Arabia
 with 0.4 probality of cross MNC CDRs. Saui Arabia has 6 mobile operators.
 
-`python3 gen_cdr_country.py 10 -m 420 422`\
-generate 10 CDRs for MCC: 420, 422  (Saudi Arabia and Oman).\
-All CDRs ar intra MNC
+`python3 gen_cdr_country.py 1000 -m 420 422 424`\
+Generate 1000 CDRs for call in Saudi Arabia, Oman and United Arab Emirates.\
+All CDRs describes domestic calls with a probability of 0.2 of being cross mobile operator call.
 
 `python3 gen_cdr_country.py 0 -m 234 -v`\
-generate 0 CDRs for UK which has 44 mobile operators. But list all MNC codes for operators in UK.
+Generate 0 CDRs for UK which has 44 mobile operators. But list all MNC codes for mobile operators in UK.
 
 `python3 gen_cdr_country.py 100000 -c 13 -x 25 -v`\
-Generate 100,000 CDRs for local calls in a random selection of 13 countries. With a 0.25 probability of cross operator call in the same country. Also, print on stdandard error details of countries selected and their mobile operators.
+Generate 100,000 CDRs for local calls in a random selection of 13 countries.\
+Generated calls have a 0.25 probability of cross operator call in the same country.\
+and print on stdandard error details of countries selected and their mobile operators.
 
 `python3 gen_cdr_country.py 1000 -z 20 -x 50  -c 10`\
 Generate 1000 CDRs occurring a random selection of 10 countries with a 0.2 probability of an international call and a probability of 0.5 for cross operator if the call is inside the selected country.
 
-`python3 gen_cdr_country.py 100000 -z 5 -x 25 -m 530 262 422`\
+`python3 gen_cdr_country.py 100000 -z 5 -x 25 -m 530 262 424`\
 Generate 100,000 CDRs for calls in New Zealand, Germany and United Arab Emirates where the probability of an international call is 0.05 and the probability of cross operator call inside the same country is 0.25.
