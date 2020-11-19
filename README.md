@@ -38,15 +38,15 @@ Each record describes one mobile call or data transaction and is composed of fie
 
 ---
 
-# Usage
+## Usage
 
--
 `python3 gen_cdr_country.py -h`\
 Display usage message.
 
-`python3 gen_cdr_country.py 1000 -m 420 -x 40`\
-Generate 1000 CDRs for calls is Saudi Arabia with a 0.4 probability of cross mobile operator call.\
-Currently Saudi Arabia has 6 mobile operators.
+`python3 gen_cdr_country.py 1000 -z 20 -x 40 -m 310 311 312 316`\
+Generate 1000 CDRs for calls in US (including Guam) with a 0.2 probability of cross inter-region call.\
+And a 0.4 probability of inter-network call.\
+Currently US (includeing Guam) has 218 mobile operators.
 
 `python3 gen_cdr_country.py 1000 -m 420 422 424`\
 Generate 1000 CDRs for call in Saudi Arabia, Oman and United Arab Emirates.\
